@@ -324,7 +324,7 @@ class Post extends DataObject
      */
     public function getRSSContent()
     {
-        return $this->renderWith('Includes/Post_rss');
+        return $this->renderWith('SilverStripe/Forum/Includes/Post_rss');
     }
 
 
