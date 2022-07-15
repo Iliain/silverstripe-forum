@@ -13,3 +13,7 @@ SilverStripe\Security\Member:
 SilverStripe\Forum\Model\Post:
   extensions:
     - SilverStripe\Forum\Extensions\ForumSpamPostExtension
+
+SilverStripe\Forum\Model\ForumCategory:
+  has_one:
+    ForumHolder: SilverStripe\Forum\Pages\ForumHolder

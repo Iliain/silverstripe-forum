@@ -30,9 +30,9 @@ class ForumCategory extends DataObject
         'Forums' => Forum::class
     ];
 
-    private static $has_one = [
-        'ForumHolder' => ForumHolder::class
-    ];
+    // private static $has_one = [
+    //     'ForumHolder' => ForumHolder::class
+    // ];
         
     private static $default_sort = "\"StackableOrder\" DESC";
     
