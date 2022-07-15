@@ -26,12 +26,12 @@ class ForumCategory extends DataObject
         'StackableOrder' => 'Varchar(2)'
     );
     
-    private static $has_one = [
-        'ForumHolder' => ForumHolder::class
-    ];
-    
     private static $has_many = [
         'Forums' => Forum::class
+    ];
+
+    private static $has_one = [
+        'ForumHolder' => ForumHolder::class
     ];
         
     private static $default_sort = "\"StackableOrder\" DESC";
