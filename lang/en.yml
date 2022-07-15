@@ -222,6 +222,7 @@ en:
     REPLYLINK: 'View the topic'
     UNSUBSCRIBETEXT: 'Unsubscribe from the topic'
   ForumRole:
+    COMMEMBER: 'Community Member'
     ADMIN: Administrator
     ANONYMOUS: 'Anonymous user'
     AVATAR: 'Avatar Image'

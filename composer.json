@@ -1,23 +1,38 @@
 {
 	"name": "silverstripe/forum",
 	"description": "Forum module for SilverStripe.",
-	"type": "silverstripe-module",
-	"keywords": ["silverstripe", "forum"],
+	"type" : "silverstripe-vendormodule",
+	"homepage": "https://github.com/Iliain/silverstripe-forum",
+	"keywords": [
+		"silverstripe",
+		"forum"
+	],
 	"license": "BSD-3-Clause",
-	"authors": [{
-		"name": "Sean Harvey",
-		"email": "sean@silverstripe.com"
-	}, {
-		"name": "Will Rossiter",
-		"email": "will@fullscreen.io"
-	}],
-	"extra": {
-		"branch-alias": {
-			"dev-master": "1.0.x-dev"
+	"authors": [
+		{
+			"name": "Sean Harvey",
+			"email": "sean@silverstripe.com"
+		},
+		{
+			"name": "Will Rossiter",
+			"email": "will@fullscreen.io"
 		}
-	},
+	],
 	"require": {
-		"silverstripe/framework": "~3.1",
-		"silverstripe/cms": "~3.1"
-	}
+		"php": "^7",
+		"silverstripe/framework": "^4",
+        "silverstripe/cms": "^4"
+	},
+	"autoload": {
+        "psr-4": {
+            "SilverStripe\\Forum\\": "src/"
+        }
+    },
+	"extra": {
+		"expose": [
+            "client"
+        ]
+	},
+	"prefer-stable": true,
+    "minimum-stability": "dev"
 }
