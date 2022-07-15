@@ -80,7 +80,7 @@ class ForumMemberProfile extends PageController
      */
     function init()
     {
-        Requirements::themedCSS('silverstripe/silverstripe-forum:client/css/Forum', 'forum', 'all');
+        Requirements::themedCSS('client/css/Forum', 'forum', 'all');
         $member = $this->Member() ? $this->Member() : null;
         $nicknameText = ($member) ? ($member->Nickname . '\'s ') : '';
 
