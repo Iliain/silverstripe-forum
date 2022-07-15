@@ -365,4 +365,9 @@ class ForumHolderController extends PageController
                 }
             });
     }
+
+    public function getHolderLink($action = null)
+    {
+        return $this->Link($action);
+    }
 }

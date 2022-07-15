@@ -13,7 +13,6 @@ use SilverStripe\Forum\Model\Post;
  */
 class ForumDatabaseSearch implements ForumSearchProvider
 {
-    
     /**
      * Get the results from the database
      *
@@ -42,18 +41,17 @@ class ForumDatabaseSearch implements ForumSearchProvider
         //We are aiming to keep this as simple as possible). More complex impementations acheived with Solr.
         //Rquires the post be moderated, then Checks for any match of Author name or Content partial match.
         //Author name checks the full query whereas Content checks each term for matches.
-        $posts = Post::get()
-            ->filter(array(
-                'Status' => 'Moderated', //posts my be moderated/visible.
-                'Forum.ParentID' => $forumHolderID //posts must be from a particular forum section.
-                ))
-            ->filterAny(array(
-                'Author.Nickname:PartialMatch:nocase' => $query,
-                'Author.FirstName:PartialMatch:nocase' => $query,
-                'Author.Surname:PartialMatch:nocase' => $query,
-                'Content:PartialMatch:nocase' => $terms
-            ))
-            ->leftJoin('ForumThread', 'Post.ThreadID = ForumThread.ID');
+        $posts = Post::get()->filter([
+            'Status'            => 'Moderated', //posts my be moderated/visible.
+            'Forum.ParentID'    => $forumHolderID //posts must be from a particular forum section.
+        ])
+        ->filterAny([
+            'Author.Nickname:PartialMatch:nocase' => $query,
+            'Author.FirstName:PartialMatch:nocase' => $query,
+            'Author.Surname:PartialMatch:nocase' => $query,
+            'Content:PartialMatch:nocase' => $terms
+        ])
+        ->leftJoin('Forum_ForumThread', 'Forum_Post.ThreadID = Forum_ForumThread.ID');
 
         // Work out what sorting method
         switch ($order) {
@@ -63,13 +61,13 @@ class ForumDatabaseSearch implements ForumSearchProvider
             case 'oldest':
                 break;
             case 'title':
-                $posts = $posts->sort(array('Thread.Title'=>'ASC'));
+                $posts = $posts->sort(['Thread.Title' => 'ASC']);
                 break;
             default:
-                $posts = $posts->sort(array(
-                    'Thread.Title'=>'ASC',
-                    'Created' => 'DESC'
-                ));
+                $posts = $posts->sort([
+                    'Thread.Title'  => 'ASC',
+                    'Created'       => 'DESC'
+                ]);
                 break;
         }
         

@@ -400,7 +400,7 @@ class ForumRole extends DataExtension
      */
     public function getFormattedAvatar()
     {
-        $default = "silverstripe/silverstripe-forum:client/images/forummember_holder.gif";
+        $default = "resources/vendor/silverstripe/silverstripe-forum/client/images/forummember_holder.gif";
         $currentTheme = Config::inst()->get('SSViewer', 'theme');
 
         if (file_exists('themes/' . $currentTheme . '_forum/images/forummember_holder.gif')) {

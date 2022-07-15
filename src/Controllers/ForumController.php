@@ -1046,4 +1046,9 @@ class ForumController extends PageController
 
         return $this->redirect($this->Link());
     }
+
+    public function getHolderLink($action = null)
+    {
+        return $this->Parent()->Link($action);
+    }
 }

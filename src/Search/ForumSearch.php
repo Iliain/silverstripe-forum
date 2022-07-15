@@ -2,6 +2,7 @@
 
 namespace SilverStripe\Forum\Search;
 
+use SilverStripe\Forum\Search\ForumDatabaseSearch;
 use SilverStripe\Forum\Search\ForumSearchProvider;
 
 /**
@@ -22,7 +23,7 @@ class ForumSearch
      *
      * @var String
      */
-    private static $search_engine = 'ForumDatabaseSearch';
+    private static $search_engine = ForumDatabaseSearch::class;
     
     /**
      * Set the search class to use for the Forum search. Must implement the
@@ -35,7 +36,7 @@ class ForumSearch
     public static function set_search_engine($engine)
     {
         if (!$engine) {
-            $engine = 'ForumDatabaseSearch';
+            $engine = ForumDatabaseSearch::class;
         }
         
         $search = new $engine();
@@ -45,7 +46,7 @@ class ForumSearch
             
             return $search->load();
         } else {
-            user_error("$engine must implement the ForumSearchProvider interface");
+            user_error("$engine must implement the " . ForumSearchProvider::class . " interface");
         }
     }
     
