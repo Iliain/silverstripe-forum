@@ -1,5 +1,5 @@
 {
-	"name": "silverstripe/forum",
+	"name": "silverstripe/silverstripe-forum",
 	"description": "Forum module for SilverStripe.",
 	"type" : "silverstripe-vendormodule",
 	"homepage": "https://github.com/Iliain/silverstripe-forum",
