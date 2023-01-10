@@ -84,7 +84,7 @@ class ForumThreadSubscription extends DataObject
                     $email->setFrom($adminEmail);
                     $email->setTo($member->Email);
                     $email->setSubject(_t('Post.NEWREPLY', 'New reply for {title}', array('title' => $post->Title)));
-                    $email->setTemplate('ForumMember_TopicNotification');
+                    $email->setHTMLTemplate('ForumMember_TopicNotification');
                     $email->populateTemplate($member);
                     $email->populateTemplate($post);
                     $email->populateTemplate(array(
