@@ -40,10 +40,11 @@ use SilverStripe\Forum\Model\ForumThread;
 use SilverStripe\Forum\Pages\ForumHolder;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\BBCodeParser\BBCodeParser;
-use SilverStripe\Dev\Debug;
 use SilverStripe\Forum\Model\HomeplusForum;
 use SilverStripe\Forum\Model\PostAttachment;
 use SilverStripe\Forum\Model\ForumThreadSubscription;
+use SilverStripe\Security\Group;
+
 /**
  * The forum controller class
  *
@@ -659,37 +660,39 @@ class ForumController extends PageController
         if(!empty($data['SendTopic'])) {
 			//get forum members
 			$members = DataObject::get(Member::class);
-			foreach($members as $member){
-				$test_grp = 7;
-				$forum_grp = 4;
-				if($member->inGroup($forum_grp)){
-					$from = 'noreply@homeplus.co.nz';
-					$to = $member->Email;
-					$subject = 'New Topic "'. $data['Title'] .'" has been added to Homeplus Forum';
-					$topic = $data['Title'];
-					$content = $data['Content'];
-					$link = 'dashboard/';
-					$attachments = $post->Attachments();
-					// Start the email class
-					$email = new HomeplusForum();
-					// Set the values
-					$email->setFrom($from);
-					$email->setTo($to);
-					$email->setSubject($subject);
-					$email->populateTemplate(
-						array(
-							'Topic' => $topic,
-							'Content' => $content,
-							'Link' => $link,
-							'Attachments' => $attachments
-						)
-					);
-
-					// Send the email
-					$email->send();
-
-				}else{
-
+			foreach ($members as $member) {
+				$forum_grp = Group::get()->filter('Code', 'forum-members')->first();
+				if ($forum_grp && $forum_grp->exists()) {
+                    if ($member->inGroup($forum_grp) && $isSubscribed) {
+                        $from = 'noreply@' . $_SERVER['HTTP_HOST'];
+                        $to = $member->Email;
+                        $topic = $data['Title'];
+                        $subject = 'New Topic "'. $topic . '" has been added to the Forum';
+                        $content = $data['Content'];
+                        $link = $post->Link();
+                        $unsubscribeLink = $post->Link('unsubscribe/') . $thread->ID;
+                        $attachments = $post->Attachments();
+                        // Start the email class
+                        $email = new HomeplusForum();
+                        // Set the values
+                        $email->setFrom($from);
+                        $email->setTo($to);
+                        $email->setSubject($subject);
+                        $email->setHTMLTemplate('Email/ForumMember_TopicNotification');
+                        $email->setData([
+                            'Topic' => $topic,
+                            'Content' => $content,
+                            'Link' => $link,
+                            'UnsubscribeLink' => $unsubscribeLink,
+                            'Attachments' => $attachments,
+                            'Title' => $post->Title,
+                            'Author' => $post->Author(),
+                            'Member' => $member,
+                        ]);
+    
+                        // Send the email
+                        $email->send();
+                    }
 				}
 			}
 		}
@@ -728,14 +731,14 @@ class ForumController extends PageController
                     } else {
                         $email->setSubject('New post "' . $post->Title. '" in forum ['.$this->Title.']');
                     }
-                    $email->setTemplate('ForumMember_NotifyModerator');
-                    $email->populateTemplate(new ArrayData(array(
+                    $email->setHTMLTemplate('Email/ForumMember_NotifyModerator');
+                    $email->setData(new ArrayData([
                         'NewThread' => $starting_thread,
                         'Moderator' => $moderator,
                         'Author' => $post->Author(),
                         'Forum' => $this,
                         'Post' => $post
-                    )));
+                    ]));
 
                     $email->send();
                 }
