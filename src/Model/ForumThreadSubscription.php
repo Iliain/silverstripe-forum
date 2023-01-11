@@ -84,12 +84,12 @@ class ForumThreadSubscription extends DataObject
                     $email->setFrom($adminEmail);
                     $email->setTo($member->Email);
                     $email->setSubject(_t('Post.NEWREPLY', 'New reply for {title}', array('title' => $post->Title)));
-                    $email->setHTMLTemplate('ForumMember_TopicNotification');
-                    $email->populateTemplate($member);
-                    $email->populateTemplate($post);
-                    $email->populateTemplate(array(
+                    $email->setHTMLTemplate('Email/ForumMember_TopicNotification');
+                    $email->setData($member);
+                    $email->setData($post);
+                    $email->setData([
                         'UnsubscribeLink' => Director::absoluteBaseURL() . $post->Thread()->Forum()->Link() . '/unsubscribe/' . $post->ID
-                    ));
+                    ]);
                     $email->send();
                 }
             }
