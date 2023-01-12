@@ -92,7 +92,12 @@ class Post extends DataObject
      */
     public function canView($member = null, $context = [])
     {
-        if (!$member) {
+        $extended = $this->extendedCan(__FUNCTION__, $member);
+        if ($extended !== null) {
+            return $extended;
+        }
+		
+		if (!$member) {
             $member = Member::currentUser();
         }
 
@@ -110,6 +115,11 @@ class Post extends DataObject
      */
     public function canEdit($member = null, $context = [])
     {
+		$extended = $this->extendedCan(__FUNCTION__, $member);
+        if ($extended !== null) {
+            return $extended;
+        }
+		
         if (!$member) {
             $member = Member::currentUser();
         }
@@ -135,6 +145,11 @@ class Post extends DataObject
      */
     public function canDelete($member = null, $context = [])
     {
+		$extended = $this->extendedCan(__FUNCTION__, $member);
+        if ($extended !== null) {
+            return $extended;
+        }
+		
         if (!$member) {
             $member = Member::currentUser();
         }
@@ -150,6 +165,11 @@ class Post extends DataObject
      */
     public function canCreate($member = null, $context = [])
     {
+		$extended = $this->extendedCan(__FUNCTION__, $member);
+        if ($extended !== null) {
+            return $extended;
+        }
+		
         if (!$member) {
             $member = Member::currentUser();
         }
