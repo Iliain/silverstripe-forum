@@ -630,14 +630,13 @@ class ForumController extends PageController
             $post->ThreadID = $thread->ID;
         }
 
+        if ($thread->Posts()->Count() == 0) {
+            $post->Status = 'Awaiting';
+        }
+
         $post->ForumID = $thread->ForumID;
         $post->Content = $content;
         $post->write();
-		
-		if ($post->IsFirstPost()) {
-            $post->Status = 'Awaiting';
-            $post->write();
-        }
 
         if ($attachments) {
             foreach ($attachments as $attachment) {
