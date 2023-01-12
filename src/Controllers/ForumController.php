@@ -629,15 +629,15 @@ class ForumController extends PageController
             $post->AuthorID = ($member) ? $member->ID : 0;
             $post->ThreadID = $thread->ID;
         }
-		
-		if ($post->IsFirstPost()) {
-            $post->Status = 'Awaiting';
-        }
 
         $post->ForumID = $thread->ForumID;
         $post->Content = $content;
         $post->write();
-
+		
+		if ($post->IsFirstPost()) {
+            $post->Status = 'Awaiting';
+            $post->write();
+        }
 
         if ($attachments) {
             foreach ($attachments as $attachment) {
