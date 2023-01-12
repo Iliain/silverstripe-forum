@@ -64,9 +64,15 @@ class ForumThread extends DataObject
      */
     public function canPost($member = null, $context = [])
     {
-        if (!$member) {
+        $extended = $this->extendedCan(__FUNCTION__, $member);
+        if ($extended !== null) {
+            return $extended;
+        }
+		
+		if (!$member) {
             $member = Security::getCurrentUser();
         }
+		
         return ($this->Forum()->canPost($member) && !$this->IsReadOnly);
     }
 
@@ -75,6 +81,11 @@ class ForumThread extends DataObject
      */
     public function canModerate($member = null, $context = [])
     {
+		$extended = $this->extendedCan(__FUNCTION__, $member);
+        if ($extended !== null) {
+            return $extended;
+        }
+		
         if (!$member) {
             $member = Security::getCurrentUser();
         }
@@ -86,6 +97,11 @@ class ForumThread extends DataObject
      */
     public function canView($member = null, $context = [])
     {
+		$extended = $this->extendedCan(__FUNCTION__, $member);
+        if ($extended !== null) {
+            return $extended;
+        }
+		
         if (!$member) {
             $member = Security::getCurrentUser();
         }
@@ -97,6 +113,11 @@ class ForumThread extends DataObject
      */
     public function canEdit($member = null, $context = [])
     {
+		$extended = $this->extendedCan(__FUNCTION__, $member);
+        if ($extended !== null) {
+            return $extended;
+        }
+		
         if (!$member) {
             $member = Security::getCurrentUser();
         }
@@ -109,6 +130,11 @@ class ForumThread extends DataObject
      */
     public function canDelete($member = null, $context = [])
     {
+		$extended = $this->extendedCan(__FUNCTION__, $member);
+        if ($extended !== null) {
+            return $extended;
+        }
+		
         if (!$member) {
             $member = Security::getCurrentUser();
         }
@@ -120,6 +146,11 @@ class ForumThread extends DataObject
      */
     public function canCreate($member = null, $context = [])
     {
+		$extended = $this->extendedCan(__FUNCTION__, $member);
+        if ($extended !== null) {
+            return $extended;
+        }
+		
         if (!$member) {
             $member = Member::currentUser();
         }
