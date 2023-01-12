@@ -660,7 +660,7 @@ class ForumController extends PageController
             DB::query("DELETE FROM \"Forum_ForumThreadSubscription\" WHERE \"ThreadID\" = '$post->ThreadID' AND \"MemberID\" = '$member->ID'");
         }
 
-        if(!empty($data['SendTopic'])) {
+        if (!empty($data['SendTopic']) && $post->Status != 'Awaiting') {
 			//get forum members
 			$members = DataObject::get(Member::class);
 			foreach ($members as $member) {
