@@ -316,7 +316,7 @@ class ForumController extends PageController
      * @param string sortDirection The sort order direction, either ASC for ascending (default) or DESC for descending
      * @return DataObjectSet Posts
      */
-    public function Posts($sortDirection = "ASC")
+    public function Posts($sortDirection = "ASC", $getBanned = false)
     {
         $numPerPage = Forum::$posts_per_page;
 
@@ -342,23 +342,24 @@ class ForumController extends PageController
 
         /*
 		 * Don't show posts of banned or ghost members, unless current Member
-		 * is a ghost member and owner of current post
+		 * is a ghost member and owner of current post (or call allows it)
 		 */
-
-        $posts = $posts->exclude(array(
-            'Author.ForumStatus' => 'Banned'
-        ));
-
-        if ($member) {
-            $posts = $posts->exclude(array(
-                'Author.ForumStatus' => 'Ghost',
-                'Author.ID:not' => $member->ID
-            ));
-        } else {
-            $posts = $posts->exclude(array(
-                'Author.ForumStatus' => 'Ghost'
-            ));
-        }
+		if (!$getBanned) {
+			$posts = $posts->exclude(array(
+				'Author.ForumStatus' => 'Banned'
+			));
+			
+			if ($member) {
+				$posts = $posts->exclude(array(
+					'Author.ForumStatus' => 'Ghost',
+					'Author.ID:not' => $member->ID
+				));
+			} else {
+				$posts = $posts->exclude(array(
+					'Author.ForumStatus' => 'Ghost'
+				));
+			}
+		}
 
         $paginated = new PaginatedList($posts, $_GET);
         $paginated->setPageLength(Forum::$posts_per_page);
