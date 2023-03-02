@@ -334,8 +334,7 @@ class Forum extends Page
                 'Nickname' => 'Nickname',
                 'FirstName' => 'First name',
                 'Surname' => 'Surname',
-                'Email'=> 'Email',
-                'LastVisited.Long' => 'Last Visit'
+                'Email'=> 'Email'
             ));
 
             $sort->setThrowExceptionOnBadDataType(false);
