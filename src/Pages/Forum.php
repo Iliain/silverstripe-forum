@@ -470,51 +470,28 @@ class Forum extends Page
         return $sqlQuery->execute()->value();
     }
 
-    /**
+        /**
      * Returns the Topics (the first Post of each Thread) for this Forum
      * @return DataList
      */
     public function getTopics()
     {
-        // Get a list of Posts
-        $posts = Post::get();
-
-        // Get the underlying query and change it to return the ThreadID and Max(Created) and Max(ID) for each thread
-        // of those posts
-        $postQuery = $posts->dataQuery()->query();
-
-        $postQuery
-            ->setSelect(array())
-            ->selectField('MAX("Forum_Post"."Created")', 'PostCreatedMax')
-            ->selectField('MAX("Forum_Post"."ID")', 'PostIDMax')
-            ->selectField('"ThreadID"')
-            ->setGroupBy('"ThreadID"')
-            ->addWhere(sprintf('"ForumID" = \'%s\'', $this->ID))
-            ->setDistinct(false);
-
         // Get a list of forum threads inside this forum that aren't sticky
-        $threads = ForumThread::get()->filter(array(
-            'ForumID' => $this->ID,
-            'IsGlobalSticky' => 0,
-            'IsSticky' => 0
-        ));
+        $threads = ForumThread::get()->filter([
+            'ForumID'           => $this->ID,
+            'IsGlobalSticky'    => 0,
+            'IsSticky'          => 0
+        ])->sort('Created DESC');
 
-
-        // Get the underlying query and change it to inner join on the posts list to just show threads that
-        // have approved (and maybe awaiting) posts, and sort the threads by the most recent post
-        $threadQuery = $threads->dataQuery()->query();
-        $threadQuery
-            ->addSelect(array('"PostMax"."PostCreatedMax", "PostMax"."PostIDMax"'))
-            ->addFrom('INNER JOIN ('.$postQuery->sql().') AS "PostMax" ON ("PostMax"."ThreadID" = "Forum_ForumThread"."ID")')
-            ->addOrderBy(array('"PostMax"."PostCreatedMax" DESC', '"PostMax"."PostIDMax" DESC'))
-            ->setDistinct(false);
-
-        // Alter the forum threads list to use the new query
-        // $threads = $threads->setDataQuery(new ForumDataQuery('ForumThread', $threadQuery));
-
-        // And return the results
         if ($threads->count()){
-            return $threads->exists() ? new PaginatedList($threads, $_GET) : null;
+            $request = Controller::curr()->getRequest();
+            $list = PaginatedList::create($threads, $request);
+
+            $list->setPageLength(10);
+            $start = (int)$request->getVar($list->getPaginationGetVar());
+            $list->setPageStart($start);
+
+            return $list;
         }
     }
 
