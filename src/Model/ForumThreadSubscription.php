@@ -6,11 +6,9 @@ use SilverStripe\ORM\DB;
 use SilverStripe\Core\Convert;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Member;
-use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Forum\Model\ForumThread;
-use SilverStripe\Forum\Model\ForumThreadSubscription;
 
 /**
  * Forum Thread Subscription: Allows members to subscribe to this thread
@@ -22,14 +20,14 @@ class ForumThreadSubscription extends DataObject
 {
     private static $table_name = 'Forum_ForumThreadSubscription';
 
-    private static $db = array(
+    private static $db = [
         "LastSent" => "Datetime"
-    );
+    ];
 
-    private static $has_one = array(
+    private static $has_one = [
         "Thread" => ForumThread::class,
         "Member" => Member::class
-    );
+    ];
 
     /**
      * Checks to see if a Member is already subscribed to this thread
@@ -66,17 +64,15 @@ class ForumThreadSubscription extends DataObject
      */
     static function notify(Post $post)
     {
-        $list = DataObject::get(
-            ForumThreadSubscription::class,
-            "\"ThreadID\" = '". $post->ThreadID ."' AND \"MemberID\" != '$post->AuthorID'"
-        );
+        $list = ForumThreadSubscription::get()->filter([
+            'ThreadID' => $post->ThreadID,
+            'MemberID:not' => $post->AuthorID
+        ]);
 
         if ($list) {
             foreach ($list as $obj) {
-                $SQL_id = Convert::raw2sql((int)$obj->MemberID);
-
                 // Get the members details
-                $member = DataObject::get_one(Member::class, "\"Member\".\"ID\" = '$SQL_id'");
+                $member = Member::get()->byID($obj->MemberID);
                 $adminEmail = Config::inst()->get(Email::class, 'admin_email');
 
                 if ($member) {
@@ -85,10 +81,11 @@ class ForumThreadSubscription extends DataObject
                     $email->setTo($member->Email);
                     $email->setSubject(_t('Post.NEWREPLY', 'New reply for {title}', array('title' => $post->Title)));
                     $email->setHTMLTemplate('Email/ForumMember_TopicNotification');
-                    $email->setData($member);
-                    $email->setData($post);
                     $email->setData([
-                        'UnsubscribeLink' => Director::absoluteBaseURL() . $post->Thread()->Forum()->Link() . '/unsubscribe/' . $post->ID
+                        'Post' => $post,
+                        'Member' => $member,
+                        'Link' => $post->Link('show/') . $post->ThreadID,
+                        'UnsubscribeLink' => $post->Link('unsubscribe/') . $post->ThreadID,
                     ]);
                     $email->send();
                 }
